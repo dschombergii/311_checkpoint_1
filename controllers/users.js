@@ -24,9 +24,7 @@ const showUser = (req, res) => {
 // Submit a new user (hardcoded sampleUser)
 const createUser = (req, res) => {
     lastUser = Users.slice(-1)
-    let newUser = {
-        ...sampleUser
-    }
+    let newUser = { ...sampleUser }
     newUser.id = lastUser[0].id + 1
     Users.push(newUser)
     res.json(Users)
@@ -37,17 +35,12 @@ const updateUser = (req, res) => {
     const foundUser = Users.some(user => user.id === parseInt(req.params.id))
 
     if (foundUser) {
-        Users.forEach(user => {
-            if (user.id === parseInt(req.params.id)) {
-                user.name = sampleUser.name ? sampleUser.name : user.name
-                user.username = sampleUser.username ? sampleUser.username : user.username
-                user.email = sampleUser.email ? sampleUser.email : user.email
-                user.address = sampleUser.address ? sampleUser.address : user.address
-                user.phone = sampleUser.phone ? sampleUser.phone : user.phone
-                user.website = sampleUser.website ? sampleUser.website : user.website
-                user.company = sampleUser.company ? sampleUser.company : user.company
-            }
-        })
+        const userID = parseInt(req.params.id)
+        let updatedUser = Users.filter(user => user.id === userID);
+        updatedUser = { ...sampleUser }
+        updatedUser.id = userID
+        Users.splice(userID - 1, 1, updatedUser)
+        res.json(Users)
     } else {
         res.status(400).json({
             status: `400 Bad Request`,
@@ -61,10 +54,10 @@ const updateUser = (req, res) => {
 // Delete specific user
 const deleteUser = (req, res) => {
     const foundUser = Users.some(user => user.id === parseInt(req.params.id))
-    console.log(foundUser)
 
     if (foundUser) {
-        Users.splice(Users.findIndex(user => user.id === parseInt(req.params.id)), 1)
+        const deleteAlert = { alert: `userID: ${parseInt(req.params.id)} has been deleted` }
+        Users.splice(Users.findIndex(user => user.id === parseInt(req.params.id)), 1, deleteAlert)
         res.json(Users)
     } else {
         console.log("error")
